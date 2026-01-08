@@ -2,54 +2,59 @@
 determine o somatório de todos os números presentes na diagonal secundária
 da matriz. Imprimir a matriz lida sob a forma de tabela e o resultado obtido.'''
 
-def Gera():
-    try:
-        m = int(input('Digite um termo para o quadrado: '))
-    except ValueError:
-        print('Erro. Tente novamente...')
-        m = int(input('Digite um termo para o quadrado: '))
-    return m
+def ler_inteiro(mensagem, mensagem_erro="Erro. Digite um número inteiro válido: "):
+    """Lê e valida entrada de inteiros, evitando repetição de código."""
+    while True:
+        try:
+            return int(input(mensagem))
+        except ValueError:
+            print(mensagem_erro)
 
-def Forma(m):
-    a = [None] * m
+def ler_matriz(m):
+    """Lê uma matriz mxm de valores float com validação."""
+    matriz = []
     for i in range(m):
-        a[i] = [None] * m
+        linha = []
         for j in range(m):
-            while True:
-                try:
-                    a[i][j] = float(input('Digite A = ['+str(i+1)+'],['+str(j+1)+']: '))
-                    break
-                except ValueError:
-                    print('Erro na matriz. Digite novamente...')
-    return a
+            valor = ler_inteiro(
+                f'Digite A[{i+1}][{j+1}]: ',
+                'Erro na matriz. Digite um número válido: '
+            )
+            linha.append(float(valor))
+        matriz.append(linha)
+    return matriz
 
-def SomaSecundaria(a, m):
-    soma = 0
-    for i in range(-1,(-m-1), -1): # percorre a lista do último item ao primeiro
-        for j in range(-1,(-m-1), -1): # o mesmo de cima
-            if i == j:
-                soma += a[i][j+1]
-    return soma
+def soma_diagonal_secundaria(matriz):
+    """Calcula a soma da diagonal secundária de forma eficiente."""
+    return sum(matriz[i][len(matriz)-1-i] for i in range(len(matriz)))
 
-def Impr(soma, a):
-    if m < 1:
-        print('Matriz Invalida')
-    elif m == 1:
-        for i in range(m):
-            for j in range (m):
-                print ('{:.2f}|'.format(a[i][j]),end=' ')
-        print()
-    else:
-        print('\nA soma da diagonal secundaria eh {}\n'.format(soma))
-        print ('\nMatriz Lida\n')
-        for i in range(m):
-            for j in range (m):
-                print ('|{:.2f}|'.format(a[i][j]),end=' ')
-            print()
-    return
+def imprimir_resultado(matriz, soma):
+    """Imprime a matriz formatada e o resultado da soma."""
+    print("\nMatriz lida:")
+    for linha in matriz:
+        print(" ".join(f"|{valor:7.2f}|" for valor in linha))
+    
+    print(f"\nSoma da diagonal secundária: {soma:.2f}")
 
+def main():
+    """Função principal que orquestra a execução do programa."""
+    # Entrada da dimensão
+    m = ler_inteiro('Digite a dimensão da matriz quadrada (m): ')
+    
+    # Validação básica
+    if m <= 0:
+        print("Dimensão inválida. O programa será encerrado.")
+        return
+    
+    # Leitura da matriz
+    matriz = ler_matriz(m)
+    
+    # Cálculo da soma
+    soma = soma_diagonal_secundaria(matriz)
+    
+    # Exibição dos resultados
+    imprimir_resultado(matriz, soma)
 
-m = Gera()
-a = Forma(m)
-soma = SomaSecundaria(a, m)
-Impr(soma, a)
+# Execução do programa
+if __name__ == "__main__":
+    main()
